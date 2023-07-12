@@ -12,8 +12,8 @@ func NewConfig() Config {
 	return Config{
 		BindAddr: ":7070",
 		LogLevel: "debug",
-		DatabaseURL: "postgres://postgres:postgres@localhost:5432/postgres",
+		DatabaseURL: DATABASE_URL,
 	}
 }
 
-const DATABASE_URL = "postgres://root:postgres@localhost:5432/postgres"
+const DATABASE_URL = "postgres://postgres:postgres@0.0.0.0:5432/postgres"

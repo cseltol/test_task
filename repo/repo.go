@@ -10,8 +10,45 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+func InitDB() {
+	c := GetConnection()
+	defer c.Close(context.Background())
+
+	c.Exec(
+		context.Background(),
+		"CREATE DATABASE test;",
+	)
+	c.Exec(
+		context.Background(),
+		"\\c test",
+	)
+	c.Exec(
+		context.Background(),
+		`CREATE TABLE IF NOT EXISTS recipes (
+			id serial PRIMARY KEY,
+			name VARCHAR(50) NOT NULL,
+			ingridients VARCHAR[] NOT NULL,
+			description VARCHAR(255) NOT NULL
+		);`,
+	)
+}
+
+func ClearDB() {
+	c := GetConnection()
+	defer c.Close(context.Background())
+
+	c.Exec(
+		context.Background(),
+		`DROP TABLE recipes;`,
+	)
+
+	c.Exec(
+		context.Background(),
+		`DROP DATABASE test;`,
+	)
+}
+
 func GetConnection() *pgx.Conn {
-	// urlExample := "postgres://username:password@localhost:5432/database_name"
 	conn, err := pgx.Connect(context.Background(), config.DATABASE_URL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)

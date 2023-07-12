@@ -5,12 +5,14 @@ import (
 	"test_task/model"
 	"test_task/repo"
 	"testing"
-
+	
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_GetRecipeById(t *testing.T) {
+	repo.ClearDB()
+	repo.InitDB()
 	c := repo.GetConnection()
 	defer c.Close(context.Background())
 	id := uuid.New().ID()
@@ -40,6 +42,8 @@ func Test_GetRecipeById(t *testing.T) {
 }
 
 func Test_GetAllRecipes(t *testing.T) {
+	repo.ClearDB()
+	repo.InitDB()
 	c := repo.GetConnection()
 	defer c.Close(context.Background())
 
@@ -67,6 +71,8 @@ func Test_GetAllRecipes(t *testing.T) {
 }
 
 func Test_GetFormatedRecipeById(t *testing.T) {
+	repo.ClearDB()
+	repo.InitDB()
 	c := repo.GetConnection()
 	defer c.Close(context.Background())
 
@@ -94,6 +100,8 @@ func Test_GetFormatedRecipeById(t *testing.T) {
 }
 
 func Test_EditRecipieById(t *testing.T) {
+	repo.ClearDB()
+	repo.InitDB()
 	c := repo.GetConnection()
 	defer c.Close(context.Background())
 
@@ -129,6 +137,8 @@ func Test_EditRecipieById(t *testing.T) {
 }
 
 func Test_DeleteRecipeById(t *testing.T) {
+	repo.ClearDB()
+	repo.InitDB()
 	c := repo.GetConnection()
 	defer c.Close(context.Background())
 
@@ -157,6 +167,6 @@ func Test_DeleteRecipeById(t *testing.T) {
 	assert.Equal(t, 1, len(recipes))
 
 	err = repo.DeleteRecipeById(c, id)
-	
+
 	assert.NotEqual(t, nil, err)
 }
