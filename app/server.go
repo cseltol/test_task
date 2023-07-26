@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"test_task/repo"
 	"test_task/model"
+	"test_task/repo"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,19 +20,18 @@ const (
 	CtxKeyRequestID
 )
 
-
 type ctxKey int8
 
 type server struct {
-	router       *mux.Router
-	logger       *logrus.Logger
+	router *mux.Router
+	logger *logrus.Logger
 }
 
 // NewServer return default server
 func NewServer() *server {
 	srv := &server{
-		router:       mux.NewRouter(),
-		logger:       logrus.New(),
+		router: mux.NewRouter(),
+		logger: logrus.New(),
 	}
 
 	srv.routerCfg()
@@ -88,6 +87,11 @@ func (s *server) handlerRecipeCreation() http.HandlerFunc {
 		recipe := &model.Recipe{}
 		if err := json.NewDecoder(r.Body).Decode(recipe); err != nil {
 			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+		_, err := repo.FindByID(c, recipe.CreatedById)
+		if err != nil {
+			s.error(w, r, http.StatusProxyAuthRequired, nil)
 			return
 		}
 

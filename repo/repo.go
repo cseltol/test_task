@@ -24,11 +24,28 @@ func InitDB() {
 	)
 	c.Exec(
 		context.Background(),
+		`CREATE TYPE IF NOT EXISTS step AS (
+			stepDuration interval ,
+			stepDescription VARCHAR[] NOT NULL
+		);`,
+	)
+	c.Exec(
+		context.Background(),
 		`CREATE TABLE IF NOT EXISTS recipes (
 			id serial PRIMARY KEY,
 			name VARCHAR(50) NOT NULL,
-			ingridients VARCHAR[] NOT NULL,
-			description VARCHAR(255) NOT NULL
+			ingredients VARCHAR[] NOT NULL,
+			description VARCHAR(255) NOT NULL,
+		   	steps step[] NOT NULL
+		);`,
+	)
+	c.Exec(
+		context.Background(),
+		`CREATE TABLE IF NOT EXISTS users (
+			id serial PRIMARY KEY,
+			email VARCHAR(50) NOT NULL,
+			password VARCHAR(50) NOT NULL,
+			encryptedPassword VARCHAR(255)
 		);`,
 	)
 }
@@ -59,7 +76,7 @@ func GetConnection() *pgx.Conn {
 
 func CreateRecipie(c *pgx.Conn, recipe *model.Recipe) error {
 	return c.QueryRow(context.Background(),
-		"INSERT INTO recipes (name, ingridients, description) VALUES ($1, $2, $3) RETURNING id",
-		recipe.Name, recipe.Ingridients, recipe.Description,
+		"INSERT INTO recipes (createdById, name, ingredients, description, steps) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+		recipe.CreatedById, recipe.Name, recipe.Ingredients, recipe.Description, recipe.Steps,
 	).Scan(&recipe.Id)
 }
